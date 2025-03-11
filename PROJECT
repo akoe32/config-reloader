@@ -2,7 +2,7 @@
 # This file is used to track the info used to scaffold your project
 # and allow the plugins properly work.
 # More info: https://book.kubebuilder.io/reference/project-config.html
-domain: sendentembok.org
+domain: nendeskombet.com
 layout:
 - go.kubebuilder.io/v4
 projectName: config-reloader
@@ -12,8 +12,8 @@ resources:
     crdVersion: v1
     namespaced: true
   controller: true
-  domain: sendentembok.org
-  group: operation
+  domain: nendeskombet.com
+  group: ops
   kind: ConfigReloader
   path: github.com/akoe32/config-reloader/api/v1
   version: v1

@@ -1,4 +1,4 @@
-apiVersion: operation.sendentembok.org/v1
+apiVersion: ops.nendeskombet.com/v1
 kind: ConfigReloader
 metadata:
   labels:

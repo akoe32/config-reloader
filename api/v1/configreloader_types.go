@@ -20,22 +20,18 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 // ConfigReloaderSpec defines the desired state of ConfigReloader.
 type ConfigReloaderSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of ConfigReloader. Edit configreloader_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	WorkloadName  string `json:"workloadName"`
+	ConfigmapName string `json:"configmapName,omitempty"`
+	SecretName    string `json:"secretName,omitempty"`
+	ResourceType  string `json:"resourceType,omitempty"`
+	WorkloadType  string `json:"workloadType,omitempty"`
 }
 
 // ConfigReloaderStatus defines the observed state of ConfigReloader.
 type ConfigReloaderStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	LastReloadTime metav1.Time `json:"lastReloadTime,omitempty"`
 }
 
 // +kubebuilder:object:root=true

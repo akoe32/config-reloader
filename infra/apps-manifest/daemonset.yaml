@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: dummy-daemonset
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: dummy-daemon
+  template:
+    metadata:
+      labels:
+        app: dummy-daemon
+    spec:
+      containers:
+        - name: dummy-daemon-container
+          image: nginx:latest
+          env:
+            - name: APP_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: dummy-config
+                  key: APP_ENV
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: dummy-config
+                  key: LOG_LEVEL
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dummy-secret
+                  key: DB_PASSWORD

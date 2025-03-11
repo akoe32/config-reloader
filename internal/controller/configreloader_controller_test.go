@@ -27,7 +27,7 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	operationv1 "github.com/akoe32/config-reloader/api/v1"
+	opsv1 "github.com/akoe32/config-reloader/api/v1"
 )
 
 var _ = Describe("ConfigReloader Controller", func() {
@@ -40,13 +40,13 @@ var _ = Describe("ConfigReloader Controller", func() {
 			Name:      resourceName,
 			Namespace: "default", // TODO(user):Modify as needed
 		}
-		configreloader := &operationv1.ConfigReloader{}
+		configreloader := &opsv1.ConfigReloader{}
 
 		BeforeEach(func() {
 			By("creating the custom resource for the Kind ConfigReloader")
 			err := k8sClient.Get(ctx, typeNamespacedName, configreloader)
 			if err != nil && errors.IsNotFound(err) {
-				resource := &operationv1.ConfigReloader{
+				resource := &opsv1.ConfigReloader{
 					ObjectMeta: metav1.ObjectMeta{
 						Name:      resourceName,
 						Namespace: "default",
@@ -59,7 +59,7 @@ var _ = Describe("ConfigReloader Controller", func() {
 
 		AfterEach(func() {
 			// TODO(user): Cleanup logic after each test, like removing the resource instance.
-			resource := &operationv1.ConfigReloader{}
+			resource := &opsv1.ConfigReloader{}
 			err := k8sClient.Get(ctx, typeNamespacedName, resource)
 			Expect(err).NotTo(HaveOccurred())
 
