@@ -6,3 +6,4 @@ resources:
   - statefulset.yaml
   - configmap.yaml
   - secret.yaml
+  - config-reloader.yaml

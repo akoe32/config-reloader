@@ -1,0 +1,387 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: config-reloader
+    control-plane: controller-manager
+  name: config-reloader-system
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.17.1
+  name: configreloaders.ops.nendeskombet.com
+spec:
+  group: ops.nendeskombet.com
+  names:
+    kind: ConfigReloader
+    listKind: ConfigReloaderList
+    plural: configreloaders
+    singular: configreloader
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: ConfigReloader is the Schema for the configreloaders API.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ConfigReloaderSpec defines the desired state of ConfigReloader.
+            properties:
+              configmapName:
+                type: string
+              resourceType:
+                type: string
+              secretName:
+                type: string
+              workloadName:
+                type: string
+              workloadType:
+                type: string
+            required:
+            - workloadName
+            type: object
+          status:
+            description: ConfigReloaderStatus defines the observed state of ConfigReloader.
+            properties:
+              lastReloadTime:
+                format: date-time
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: config-reloader
+  name: config-reloader-controller-manager
+  namespace: config-reloader-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: config-reloader
+  name: config-reloader-leader-election-role
+  namespace: config-reloader-system
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: config-reloader
+  name: config-reloader-configreloader-admin-role
+rules:
+- apiGroups:
+  - ops.nendeskombet.com
+  resources:
+  - configreloaders
+  verbs:
+  - '*'
+- apiGroups:
+  - ops.nendeskombet.com
+  resources:
+  - configreloaders/status
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: config-reloader
+  name: config-reloader-configreloader-editor-role
+rules:
+- apiGroups:
+  - ops.nendeskombet.com
+  resources:
+  - configreloaders
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ops.nendeskombet.com
+  resources:
+  - configreloaders/status
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: config-reloader
+  name: config-reloader-configreloader-viewer-role
+rules:
+- apiGroups:
+  - ops.nendeskombet.com
+  resources:
+  - configreloaders
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ops.nendeskombet.com
+  resources:
+  - configreloaders/status
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: config-reloader-manager-role
+rules:
+- apiGroups:
+  - ops.nendeskombet.com
+  resources:
+  - configreloaders
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ops.nendeskombet.com
+  resources:
+  - configreloaders/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - ops.nendeskombet.com
+  resources:
+  - configreloaders/status
+  verbs:
+  - get
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: config-reloader-metrics-auth-role
+rules:
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: config-reloader-metrics-reader
+rules:
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: config-reloader
+  name: config-reloader-leader-election-rolebinding
+  namespace: config-reloader-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: config-reloader-leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: config-reloader-controller-manager
+  namespace: config-reloader-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: config-reloader
+  name: config-reloader-manager-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: config-reloader-manager-role
+subjects:
+- kind: ServiceAccount
+  name: config-reloader-controller-manager
+  namespace: config-reloader-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: config-reloader-metrics-auth-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: config-reloader-metrics-auth-role
+subjects:
+- kind: ServiceAccount
+  name: config-reloader-controller-manager
+  namespace: config-reloader-system
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: config-reloader
+    control-plane: controller-manager
+  name: config-reloader-controller-manager-metrics-service
+  namespace: config-reloader-system
+spec:
+  ports:
+  - name: https
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app.kubernetes.io/name: config-reloader
+    control-plane: controller-manager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: config-reloader
+    control-plane: controller-manager
+  name: config-reloader-controller-manager
+  namespace: config-reloader-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: config-reloader
+      control-plane: controller-manager
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+      labels:
+        app.kubernetes.io/name: config-reloader
+        control-plane: controller-manager
+    spec:
+      containers:
+      - args:
+        - --metrics-bind-address=:8443
+        - --leader-elect
+        - --health-probe-bind-address=:8081
+        command:
+        - /manager
+        image: akoe32/config-reloader:v1.7
+        imagePullPolicy: Never
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        name: manager
+        ports: []
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 500m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts: []
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: config-reloader-controller-manager
+      terminationGracePeriodSeconds: 10
+      volumes: []

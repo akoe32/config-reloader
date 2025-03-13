@@ -17,30 +17,9 @@ spec:
       containers:
         - name: dummy-stateful-container
           image: nginx:latest
-          env:
-            - name: APP_ENV
-              valueFrom:
-                configMapKeyRef:
-                  name: dummy-config
-                  key: APP_ENV
-            - name: LOG_LEVEL
-              valueFrom:
-                configMapKeyRef:
-                  name: dummy-config
-                  key: LOG_LEVEL
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: dummy-secret
-                  key: DB_PASSWORD
-  #         volumeMounts:
-  #           - name: data
-  #             mountPath: /usr/share/nginx/html
-  # volumeClaimTemplates:
-  #   - metadata:
-  #       name: data
-  #     spec:
-  #       accessModes: [ "ReadWriteOnce" ]
-  #       resources:
-  #         requests:
-  #           storage: 1Gi
+          imagePullPolicy: Never
+          envFrom:
+            - configMapRef:
+                name: dummy-config
+            - secretRef:
+                name: dummy-secret

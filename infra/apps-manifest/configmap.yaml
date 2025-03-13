@@ -5,4 +5,7 @@ metadata:
   namespace: default
 data:
   APP_ENV: "development"
-  LOG_LEVEL: "info"
+  LOG_LEVEL: "error"
+  DUMMY: "TRUE"
+  TRIAL: "ERROR"
+  IS_TRUE: "TRUE"

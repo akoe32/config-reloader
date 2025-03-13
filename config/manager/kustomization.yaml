@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: akoe32/config-reloader
-  newTag: v1
+  newTag: v1.7

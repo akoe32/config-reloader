@@ -15,11 +15,11 @@ docker-push: ## Push docker image with the manager.
 ## Create Cluster
 .PHONY: create-cluster
 create-cluster:
-    kind create cluster --config infra/kind-manifest/cluster.yaml
+	kind create cluster --config infra/kind-manifest/cluster.yaml
 
 .PHONY: load-image
 load-image:
-    kind load docker-image ${IMG} --name ${CLUSTER_NAME}
+	kind load docker-image ${IMG} --name ${CLUSTER_NAME}
 
 ## Deployment
 
@@ -29,12 +29,18 @@ install-crd:
 
 .PHONY: deploy-operator
 deploy-operator:
+	mkdir -p dist
 	cd config/manager && kustomize edit set image controller=${IMG}
+	kustomize build config/default > dist/install.yaml
 	kustomize build config/default | kubectl apply -f -
 
 .PHONY: deploy-apps
 deploy-apps:
-    kustomize build infra/apps-manifest | kubectl apply -f -
+	kustomize build infra/apps-manifest | kubectl apply -f -
+
+.PHONY: gen-kubeconfig
+gen-kubeconfig:
+	kubectl cluster-info --context kind-kind	
 
 .PHONY: undeploy
 undeploy: 
@@ -43,5 +49,5 @@ undeploy:
 
 .PHONY: undeploy-apps
 undeploy-apps:
-    kustomize build infra/apps-manifest | kubectl delete -f -
+	kustomize build infra/apps-manifest | kubectl delete -f -
 

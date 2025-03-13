@@ -1,0 +1,10 @@
+apiVersion: ops.nendeskombet.com/v1
+kind: ConfigReloader
+metadata:
+  name: reloader-configmap
+  namespace: default
+spec:
+  workloadName: dummy-deployment
+  configmapName: dummy-config
+  resourceType: ConfigMap
+  workloadType: Deployment
