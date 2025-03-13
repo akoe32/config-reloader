@@ -16,6 +16,8 @@ docker-push: ## Push docker image with the manager.
 .PHONY: create-cluster
 create-cluster:
 	kind create cluster --config infra/kind-manifest/cluster.yaml
+	kind export kubeconfig --name kind --kubeconfig ~/.kube/kind 
+	export KUBECONFIG=~/.kube/kind
 
 .PHONY: load-image
 load-image:
@@ -32,7 +34,7 @@ deploy-operator:
 	mkdir -p dist
 	cd config/manager && kustomize edit set image controller=${IMG}
 	kustomize build config/default > dist/install.yaml
-	kustomize build config/default | kubectl apply -f -
+	kubectl apply -f dist/install.yaml
 
 .PHONY: deploy-apps
 deploy-apps:

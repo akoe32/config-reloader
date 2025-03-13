@@ -6,6 +6,6 @@ metadata:
 data:
   APP_ENV: "development"
   LOG_LEVEL: "error"
-  DUMMY: "TRUE"
-  TRIAL: "ERROR"
-  IS_TRUE: "TRUE"
+  DUMMY: "FALSE"
+  TRIAL: "INFO"
+  IS_TRUE: "ERROR"
