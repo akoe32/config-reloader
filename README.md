@@ -1,7 +1,7 @@
 # config-reloader
 
 ## Demo
-<script src="https://asciinema.org/a/hlKdfk0emGpXKyxvXfyvY52PO.js" id="asciicast-hlKdfk0emGpXKyxvXfyvY52PO" async="true"></script>
+[![asciicast](https://asciinema.org/a/hlKdfk0emGpXKyxvXfyvY52PO.svg)](https://asciinema.org/a/hlKdfk0emGpXKyxvXfyvY52PO)
 
 ## Getting Started
 
